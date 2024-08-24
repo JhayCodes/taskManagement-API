@@ -12,12 +12,10 @@ namespace taskManager.Controllers
     public class taskManagerController : ControllerBase
     {
         private readonly TaskDbContext _context;
-        private readonly IMapper _mapper;
 
-        public taskManagerController(TaskDbContext context, IMapper mapper)
+        public taskManagerController(TaskDbContext context)
         {
             _context = context;
-            _mapper = mapper;
         }
 
         //Create/Edit
@@ -25,21 +23,21 @@ namespace taskManager.Controllers
         public async Task<JsonResult> CreateEdit(TaskList task)
         {
             if (task.Id == 0)
-            {
-                task.created_at = DateTime.Now.ToString("MM-dd-yyyy HH:mm:ss");
-                task.updated_at = null;
+            { //Create
+                task.created_at = DateTime.Now;
                 task.Status = Status.pending;
                 _context.TaskLists.Add(task);
             }
             else
             {
+                //Edit
                 var existingTask = await _context.TaskLists.FindAsync(task.Id);
 
                 if(existingTask == null)
                      return new JsonResult(NotFound());
 
                 existingTask.Status = task.Status;
-                existingTask.updated_at = DateTime.Now.ToString("MM-dd-yyyy HH:mm:ss");
+                existingTask.updated_at = DateTime.Now;
                 existingTask = task;
             }
 
@@ -52,8 +50,7 @@ namespace taskManager.Controllers
         [HttpGet]
         public async Task<JsonResult> Get(int id)
         {
-            var task = await _context.TaskLists.FindAsync(id);
-            var result = _mapper.Map<TaskListDTO>(task);
+            var result = await _context.TaskLists.FindAsync(id);
 
             if(result == null)
                 return new JsonResult(NotFound());
@@ -82,9 +79,8 @@ namespace taskManager.Controllers
         [HttpGet]
         public async Task<JsonResult> GetAll()
         {
-            var taskLists =  _context.TaskLists.ToList();
-            var results = _mapper.Map<IList<TaskListDTO>>(taskLists);
-
+            var results = await _context.TaskLists.ToListAsync();
+           
             return new JsonResult(results);
         }
 

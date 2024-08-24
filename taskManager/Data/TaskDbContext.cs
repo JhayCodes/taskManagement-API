@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using taskManager.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+
 
 namespace taskManager.Data
 {

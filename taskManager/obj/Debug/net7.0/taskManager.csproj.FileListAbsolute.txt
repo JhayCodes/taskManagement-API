@@ -70,3 +70,10 @@ D:\ProgramPractice\taskManagement-API\taskManager\obj\Debug\net7.0\refint\taskMa
 D:\ProgramPractice\taskManagement-API\taskManager\obj\Debug\net7.0\taskManager.pdb
 D:\ProgramPractice\taskManagement-API\taskManager\obj\Debug\net7.0\taskManager.genruntimeconfig.cache
 D:\ProgramPractice\taskManagement-API\taskManager\obj\Debug\net7.0\ref\taskManager.dll
+D:\ProgramPractice\taskManagement-API\taskManager\bin\Debug\net7.0\Humanizer.dll
+D:\ProgramPractice\taskManagement-API\taskManager\bin\Debug\net7.0\Microsoft.AspNetCore.Identity.EntityFrameworkCore.dll
+D:\ProgramPractice\taskManagement-API\taskManager\bin\Debug\net7.0\Microsoft.EntityFrameworkCore.Design.dll
+D:\ProgramPractice\taskManagement-API\taskManager\bin\Debug\net7.0\Microsoft.Extensions.DependencyModel.dll
+D:\ProgramPractice\taskManagement-API\taskManager\bin\Debug\net7.0\Mono.TextTemplating.dll
+D:\ProgramPractice\taskManagement-API\taskManager\bin\Debug\net7.0\System.CodeDom.dll
+D:\ProgramPractice\taskManagement-API\taskManager\bin\Debug\net7.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll

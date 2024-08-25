@@ -79,3 +79,6 @@ D:\ProgramPractice\taskManagement-API\taskManager\obj\Debug\net7.0\refint\taskMa
 D:\ProgramPractice\taskManagement-API\taskManager\obj\Debug\net7.0\taskManager.pdb
 D:\ProgramPractice\taskManagement-API\taskManager\obj\Debug\net7.0\taskManager.genruntimeconfig.cache
 D:\ProgramPractice\taskManagement-API\taskManager\obj\Debug\net7.0\ref\taskManager.dll
+D:\ProgramPractice\taskManagement-API\taskManager\bin\Debug\net7.0\Scrutor.dll
+D:\ProgramPractice\taskManagement-API\taskManager\bin\Debug\net7.0\Swashbuckle.AspNetCore.Filters.dll
+D:\ProgramPractice\taskManagement-API\taskManager\bin\Debug\net7.0\Swashbuckle.AspNetCore.Filters.Abstractions.dll

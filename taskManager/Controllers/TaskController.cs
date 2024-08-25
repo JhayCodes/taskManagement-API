@@ -1,9 +1,9 @@
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
 using taskManager.Data;
 using taskManager.Models;
-using AutoMapper;
+
 
 namespace taskManager.Controllers
 {
@@ -20,7 +20,7 @@ namespace taskManager.Controllers
 
         //Create/Edit
         [HttpPost]
-        public async Task<JsonResult> CreateEdit(TaskList task)
+        public JsonResult CreateEdit(TaskList task)
         {
             if (task.Id == 0)
             { //Create
@@ -31,85 +31,83 @@ namespace taskManager.Controllers
             else
             {
                 //Edit
-                var existingTask = await _context.TaskLists.FindAsync(task.Id);
-
-                if(existingTask == null)
+                var taskInDb =  _context.TaskLists.Find(task.Id);
+        
+                if(taskInDb == null)
                      return new JsonResult(NotFound());
 
-                existingTask.Status = task.Status;
-                existingTask.updated_at = DateTime.Now;
-                existingTask = task;
+                //  
+                taskInDb = task;
             }
 
-            await _context.SaveChangesAsync();
+             _context.SaveChanges();
 
             return new JsonResult(Ok(task));
         }
     
         //Get 
-        [HttpGet]
-        public async Task<JsonResult> Get(int id)
-        {
-            var result = await _context.TaskLists.FindAsync(id);
+        // [HttpGet]
+        // public async Task<JsonResult> Get(int id)
+        // {
+        //     var result = await _context.TaskLists.FindAsync(id);
 
-            if(result == null)
-                return new JsonResult(NotFound());
+        //     if(result == null)
+        //         return new JsonResult(NotFound());
             
-            return new JsonResult(Ok(result));
-        }
+        //     return new JsonResult(Ok(result));
+        // }
 
         //Delete
-        [HttpDelete]
-        public async Task<JsonResult> Delete(int id)
-        {
-            //find task to delete by id
-            var result = _context.TaskLists.Find(id);
+        // [HttpDelete]
+        // public async Task<JsonResult> Delete(int id)
+        // {
+        //     //find task to delete by id
+        //     var result = _context.TaskLists.Find(id);
 
-            if(result == null)
-              return new JsonResult(NotFound());
+        //     if(result == null)
+        //       return new JsonResult(NotFound());
 
-            _context.TaskLists.Remove(result);
-            await _context.SaveChangesAsync();
+        //     _context.TaskLists.Remove(result);
+        //     await _context.SaveChangesAsync();
 
-            return new JsonResult(NoContent());
-        }
+        //     return new JsonResult(NoContent());
+        // }
     
-        //Get all
-        // [Authorize]
-        [HttpGet]
-        public async Task<JsonResult> GetAll()
-        {
-            var results = await _context.TaskLists.ToListAsync();
-           
-            return new JsonResult(results);
-        }
+        // //Get all
+        // // [Authorize]
+        // [HttpGet]
+        // public async Task<JsonResult> GetAll()
+        // {
+        //     var results = await _context.TaskLists.ToListAsync();
+        //     return new JsonResult(results);
+        // }
 
-        //Filter by Status
-        [HttpGet]
-        public async Task<IEnumerable<TaskList>> FilterByStatus(string searchStatus)
-        {
-            IQueryable<TaskList> query = _context.TaskLists;
-            searchStatus.ToLower();
-            int statusID = 0;
-            if(searchStatus != null)
-            {
-                string[] statusList = {"pending","in progress", "completed"};
-                for(int i = 0; i < statusList.Length; i++){
-                    if(String.Equals(searchStatus, statusList[i]))
-                    {
-                        statusID = i;
-                        break;
-                    }
-                } 
+        // //Filter by Status
+        // [HttpGet]
+        // public async Task<IEnumerable<TaskList>> FilterByStatus(string searchStatus)
+        // {
+        //     IQueryable<TaskList> query = _context.TaskLists;
+        //     searchStatus.ToLower();
+        //     int statusID = 0;
+        //     if(searchStatus != null)
+        //     {
+        //         string[] statusList = {"pending","in progress", "completed"};
+        //         for(int i = 0; i < statusList.Length; i++){
+        //             if(String.Equals(searchStatus, statusList[i]))
+        //             {
+        //                 statusID = i;
+        //                 break;
+        //             }
+        //         } 
                 
                 
-                query = query.Where(e => e.Status == (Status)statusID); 
+        //         query = query.Where(e => e.Status == (Status)statusID); 
                
           
-            }
+        //     }
             
-            return await query.ToListAsync();
-        }
+        //     return await query.ToListAsync();
+        // }
 
 
     }

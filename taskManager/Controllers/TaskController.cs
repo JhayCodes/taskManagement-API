@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using taskManager.Data;
 using taskManager.Models;
+using AutoMapper;
+using taskManager.DTOs;
 
 
 namespace taskManager.Controllers
@@ -12,22 +14,27 @@ namespace taskManager.Controllers
     public class taskManagerController : ControllerBase
     {
         private readonly TaskDbContext _context;
+        private readonly IMapper _mapper;
 
-        public taskManagerController(TaskDbContext context)
+        public taskManagerController(TaskDbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         //Create/Edit
         [HttpPost]
-        public async Task<JsonResult> CreateEdit(TaskList task)
+        public async Task<JsonResult> CreateEdit(CreateEditDTO task)
         {
             if (task.Id == 0)
             { //Create
                 task.created_at = DateTime.Now;
                 task.updated_at = null;
                 task.status = "pending";
-                _context.TaskLists.Add(task);
+
+                var finalResult = _mapper.Map<TaskList>(task);
+
+                await _context.TaskLists.AddAsync(finalResult);
             }
             else
             {
@@ -39,12 +46,12 @@ namespace taskManager.Controllers
 
                 //  
                 taskInDb.updated_at = DateTime.Now;
-                taskInDb = task;
+                taskInDb = _mapper.Map<TaskList>(task);
             }
 
              await _context.SaveChangesAsync();
 
-            return new JsonResult(Ok(task));
+            return new JsonResult(Ok(_mapper.Map<TaskList>(task)));
         }
     
         //Get 
@@ -57,7 +64,10 @@ namespace taskManager.Controllers
                 return new JsonResult(NotFound());
             
             result.created_at.ToString("yyyy-MM-dd HH:mm:ss");
-            return new JsonResult(Ok(result));
+
+            var resultDTO = _mapper.Map<GetListDTO>(result);
+
+            return new JsonResult(Ok(resultDTO));
         }
 
         //Delete
@@ -82,6 +92,7 @@ namespace taskManager.Controllers
         public async Task<JsonResult> GetAll(string? searchStatus)
         {   
             var results = await _context.TaskLists.ToListAsync();
+            
             if(searchStatus != null)
             {
                 searchStatus.ToLower();
@@ -95,38 +106,12 @@ namespace taskManager.Controllers
                 } 
 
                 results = results.Where(x => x.status == searchStatus).ToList();
+                
                
             }
-            
-            return new JsonResult(results);
+            var resultDTO = _mapper.Map<IEnumerable<GetListDTO>>(results);
+            return new JsonResult(resultDTO);
         }
-
-        // //Filter by Status
-        // [HttpGet]
-        // public async Task<IEnumerable<TaskList>> FilterByStatus(string searchStatus)
-        // {
-        //     IQueryable<TaskList> query = _context.TaskLists;
-        //     searchStatus.ToLower();
-        //     int statusID = 0;
-        //     if(searchStatus != null)
-        //     {
-        //         string[] statusList = {"pending","in progress", "completed"};
-        //         for(int i = 0; i < statusList.Length; i++){
-        //             if(String.Equals(searchStatus, statusList[i]))
-        //             {
-        //                 statusID = i;
-        //                 break;
-        //             }
-        //         } 
-                
-                
-        //         query = query.Where(e => e.Status == (Status)statusID); 
-               
-          
-        //     }
-            
-        //     return await query.ToListAsync();
-        // }
 
 
     }

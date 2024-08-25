@@ -5,6 +5,9 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Filters;
+using taskManager;
+using taskManager.DTOs;
+
 
 
 
@@ -16,6 +19,9 @@ var builder = WebApplication.CreateBuilder(args);
 //Db Creation
 builder.Services.AddDbContext<TaskDbContext>
 (opt => opt.UseInMemoryDatabase("TaskListDb"));
+
+// reference your Mapper
+builder.Services.AddAutoMapper(typeof(Mapping));
 
 builder.Services.AddAuthentication(options =>
     {
@@ -36,7 +42,7 @@ builder.Services.AddAuthentication(options =>
         };
     });
 
-// reference your MapperInitializer
+
 
 
 builder.Services.AddControllers();

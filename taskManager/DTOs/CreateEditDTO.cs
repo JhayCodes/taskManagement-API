@@ -6,7 +6,6 @@ namespace taskManager.DTOs
 {
      public class CreateEditDTO
     {
-        [JsonIgnore]
         
         public int Id { get; set; }
         [Required]

@@ -59,14 +59,17 @@ namespace taskManager.Controllers
 
                     //  
                     taskInDb.updated_at = DateTime.Now;
+                    taskInDb.status = task.status;
+                    taskInDb.title = task.title;
+                    taskInDb.description = task.description;
                     taskInDb = _mapper.Map<TaskList>(task);
                     await _context.SaveChangesAsync();
-                    return new JsonResult(new { success = "List Updated Successfully" })
-                    {
-                        StatusCode = 204
-                    };
+                   
                 }
-
+                  return new JsonResult(new { success = "List Modified Successfully" })
+                    {
+                        StatusCode = 201
+                    };
 
             }
             catch (Exception)
@@ -129,7 +132,7 @@ namespace taskManager.Controllers
 
                  return new JsonResult(new { success = "List Deleted Successfully" })
                     {
-                        StatusCode = 204
+                        StatusCode = 201
                     };
             }
             catch

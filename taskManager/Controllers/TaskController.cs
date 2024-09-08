@@ -7,6 +7,8 @@ using AutoMapper;
 using taskManager.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Azure;
+using Microsoft.AspNetCore.JsonPatch;
 
 
 namespace taskManager.Controllers
@@ -82,7 +84,39 @@ namespace taskManager.Controllers
             }
         }
 
+//Edit partial of the task
+        [HttpPatch("{id:int}", Name = "UpdatePartialCreate")]
+        public async Task<JsonResult> UpdateTask(int id, JsonPatchDocument<CreateEditDTO> patchDTO)
+        {
+            if(patchDTO == null || id == 0){
+                return new JsonResult(new { error = "List not found" })
+                        {
+                            StatusCode = 400
+                        };
+            }
+            var taskInDb = await _context.TaskLists.FirstOrDefaultAsync(u => u.Id == id);
+            if(taskInDb == null){
+                return new JsonResult(new { error = "List not found" })
+                        {
+                            StatusCode = 400
+                        };
+            }
+           // patchDTO.ApplyTo(CreateEditDTO, ModelState);
+           if(!ModelState.IsValid)
+           {
+                 return new JsonResult(new { error = "List not found" })
+                        {
+                            StatusCode = 400
+                        };
+           }
+           return new JsonResult(new { success = "List Created Successfully" })
+                    {
+                        StatusCode = 201
+                    };
+        }
+
         //Get 
+        
         [HttpGet("{id:int}")]
         public async Task<JsonResult> Get(int id)
         {
@@ -113,6 +147,8 @@ namespace taskManager.Controllers
         }
 
         //Delete
+        
+        [Authorize]
         [HttpDelete("{id:int}")]
         public async Task<JsonResult> Delete(int id)
         {

@@ -23,11 +23,7 @@ builder.Services.AddDbContext<TaskDbContext>
 // reference your Mapper
 builder.Services.AddAutoMapper(typeof(Mapping));
 
-builder.Services.AddAuthentication(options =>
-    {
-        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-    })
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
         options.TokenValidationParameters = new TokenValidationParameters
@@ -36,27 +32,46 @@ builder.Services.AddAuthentication(options =>
             ValidateAudience = true,
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
-            ValidIssuer = "yourdomain.com", // Replace with your issuer
-            ValidAudience = "yourdomain.com", // Replace with your audience
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("YourSecretKeyHere")) // Use a strong secret key
+            ValidIssuer = builder.Configuration["Jwt:Issuer"], 
+            ValidAudience = builder.Configuration["Jwt:Audience"], 
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])) 
         };
     });
 
+builder.Services.AddAuthorization();
 
 
 
 builder.Services.AddControllers();
+
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(opt => 
 {
-    opt.AddSecurityDefinition("oAuth2", new OpenApiSecurityScheme
+    opt.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
+        Scheme = "Bearer",
+        BearerFormat = "JWT",
         In = ParameterLocation.Header,
         Name = "Authorization",
-        Type = SecuritySchemeType.ApiKey
+        Description = "Bearer Authentication with JWT Token",
+        Type = SecuritySchemeType.Http
     });
-    opt.OperationFilter<SecurityRequirementsOperationFilter>();
+    opt.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Id = "Bearer",
+                    Type = ReferenceType.SecurityScheme
+                }
+            },
+            new List<string>()
+        }
+    } );
 });
 
 var app = builder.Build();
